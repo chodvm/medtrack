@@ -6,12 +6,23 @@ import Topbar from "@/components/nav/topbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default async function RootLayout({ children }:{ children: React.ReactNode }){
-  // Stub role until auth wired
+// Optional: basic SEO; expand later if you want
+export const metadata = {
+  title: "MedTrack",
+  description: "Internal inventory manager for urgent care",
+};
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // Stub role until auth is wired (e.g., Supabase Auth -> fetch role/caps)
   const role = "admin" as const;
   const caps = { canViewCosts: true };
+
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <body className={`${inter.className} h-full bg-white text-black`}>
         <RBACProvider role={role} caps={caps}>
           <div className="flex h-screen">
