@@ -1,4 +1,3 @@
-// lib/supabase.ts
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
