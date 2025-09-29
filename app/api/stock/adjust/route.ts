@@ -4,13 +4,12 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 export async function POST(req: Request) {
   const { itemId, itemName, qtyDelta, reason, note } = await req.json();
 
-  // If we get itemName from Quick Deduct, look up the item ID
   let targetItemId = itemId;
   if (!targetItemId && itemName) {
     const { data: found, error: findErr } = await supabaseAdmin
       .from("items")
       .select("id")
-      .ilike("name", itemName)  // quick, simple lookup; you can replace with a proper search
+      .ilike("name", itemName)
       .limit(1)
       .single();
 
@@ -26,10 +25,9 @@ export async function POST(req: Request) {
 
   const { error } = await supabaseAdmin.from("stock_adjustments").insert({
     item_id: targetItemId,
-    qty_delta: qtyDelta,        // negative for consume
+    qty_delta: qtyDelta,
     reason,
     notes: note ?? null,
-    // user_id: attach once auth is wired
   });
 
   if (error) {
@@ -39,3 +37,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ ok: true });
 }
+
