@@ -1,3 +1,4 @@
+// lib/supabase.ts
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
@@ -15,12 +16,8 @@ export function supabaseServer() {
       get(name: string) {
         return cookieStore.get(name)?.value;
       },
-      set() {
-        // no-op for now (we’re not mutating cookies in RSC/SSR paths yet)
-      },
-      remove() {
-        // no-op for now
-      },
+      set() { /* no-op */ },
+      remove() { /* no-op */ },
     },
   });
 }
