@@ -15,9 +15,12 @@ export function supabaseServer() {
       get(name: string) {
         return cookieStore.get(name)?.value;
       },
-      // Next.js server components can’t set cookies here, so stub these:
-      set() { /* no-op for now */ },
-      remove() { /* no-op for now */ },
+      set() {
+        // no-op for now (we’re not mutating cookies in RSC/SSR paths yet)
+      },
+      remove() {
+        // no-op for now
+      },
     },
   });
 }
