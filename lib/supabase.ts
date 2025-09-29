@@ -1,17 +1,18 @@
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
 import { cookies, headers } from "next/headers";
-import { env } from "@/env.mjs";
 
-export function supabaseBrowser(){
-  return createBrowserClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+const URL  = process.env.NEXT_PUBLIC_SUPABASE_URL  || "";
+const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+export function supabaseBrowser() {
+  return createBrowserClient(URL, ANON);
 }
 
-export function supabaseServer(){
+export function supabaseServer() {
   const cookieStore = cookies();
   const hdrs = headers();
-  return createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    { cookies: { get: (name:string)=>cookieStore.get(name)?.value }, headers: () => hdrs }
-  );
+  return createServerClient(URL, ANON, {
+    cookies: { get: (name: string) => cookieStore.get(name)?.value },
+    headers: () => hdrs,
+  });
 }
