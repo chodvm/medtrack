@@ -3,20 +3,28 @@ import * as React from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { useItemColumns, type ItemRow } from "./columns";
 
-export default function ItemsPage(){
+export default function ItemsPage() {
   const columns = useItemColumns();
   const [rows, setRows] = React.useState<ItemRow[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const [adjustItemId, setAdjustItemId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    setRows([
-      { id: "1", sku: "LAC-PACK-01", name: "Laceration Repair Pack", category: "Procedural", onHand: 18, reorderLevel: 10, lastRestock: "2025-09-20", expirySoon: null, vendorsCount: 3, cheapestVendor: "MedSupplyCo" },
-      { id: "2", sku: "SPLINT-STD", name: "Ready Splint", category: "Ortho", onHand: 9, reorderLevel: 12, lastRestock: "2025-09-14", expirySoon: null, vendorsCount: 2, cheapestVendor: "OrthoPro" },
-    ]);
+    (async () => {
+      setLoading(true);
+      const res = await fetch("/api/items", { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        setRows(json.rows ?? []);
+      } else {
+        console.error("Failed to load items");
+      }
+      setLoading(false);
+    })();
   }, []);
 
   React.useEffect(() => {
-    function onOpen(e: any){ setAdjustItemId(e.detail.itemId); }
+    function onOpen(e: any) { setAdjustItemId(e.detail.itemId); }
     window.addEventListener("open-adjust", onOpen as any);
     return () => window.removeEventListener("open-adjust", onOpen as any);
   }, []);
@@ -30,7 +38,11 @@ export default function ItemsPage(){
           <button className="px-3 py-2 rounded-md border">Import CSV</button>
         </div>
       </div>
-      <DataTable columns={columns} data={rows} />
+      {loading ? (
+        <div className="text-sm opacity-70">Loading…</div>
+      ) : (
+        <DataTable columns={columns} data={rows} />
+      )}
       <AdjustDrawer itemId={adjustItemId} onClose={() => setAdjustItemId(null)} />
     </div>
   );
